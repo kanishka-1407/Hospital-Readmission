@@ -9,7 +9,7 @@ Predict whether a diabetic patient will be readmitted within 30 days.
 UCI Diabetes 130-US Hospitals (1999-2008).
 
 ## Planned Pipeline
-Git + DVC → MLflow → FastAPI + Docker → GitHub Actions → Evidently monitoring
+Git + DVC + EDA → MLflow → FastAPI + Docker → GitHub Actions → Evidently monitoring
 
 ## Status
 - [ done ] Repo and DVC setup
