@@ -13,6 +13,6 @@ Git + DVC → MLflow → FastAPI + Docker → GitHub Actions → Evidently monit
 
 ## Status
 - [ done ] Repo and DVC setup
-- [ ] EDA
+- [ done ] EDA
 - [ ] Experiments
 - [ ] Deployment
