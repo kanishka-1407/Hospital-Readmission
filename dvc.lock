@@ -1,0 +1,65 @@
+schema: '2.0'
+stages:
+  clean:
+    cmd: python -m src.data_cleaning
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 6a4d2c142f1f7dcb6b38c5c0c56f10d7.dir
+      size: 19161930
+      nfiles: 2
+    - path: src/data_cleaning.py
+      hash: md5
+      md5: 8fbb63056c85fc8461f3bb698df881df
+      size: 2924
+    params:
+      params.yaml:
+        clean:
+          drop_columns:
+          - weight
+          - payer_code
+          - examide
+          - citoglipton
+          expired_hospice_ids:
+          - 11
+          - 13
+          - 14
+          - 19
+          - 20
+          - 21
+          fill_unknown_columns:
+          - race
+          - medical_specialty
+          - diag_1
+          - diag_2
+          - diag_3
+          id_columns:
+          - admission_type_id
+          - discharge_disposition_id
+          - admission_source_id
+          keep_first_encounter_only: true
+    outs:
+    - path: data/processed/clean.parquet
+      hash: md5
+      md5: df35c65155c2f8271d8d45b6692acd18
+      size: 1955672
+    - path: reports/cleaning_report.json
+      hash: md5
+      md5: 25945f12c088f90f05d4b4e934127b4c
+      size: 295
+  validate:
+    cmd: python -m src.data_validation
+    deps:
+    - path: data/processed/clean.parquet
+      hash: md5
+      md5: df35c65155c2f8271d8d45b6692acd18
+      size: 1955672
+    - path: src/data_validation.py
+      hash: md5
+      md5: 52dd34492060877edd8a9c760a2ceafa
+      size: 1846
+    outs:
+    - path: reports/validation_report.json
+      hash: md5
+      md5: 9a4260ef9fb1bf64a4a6cd27a2907915
+      size: 63

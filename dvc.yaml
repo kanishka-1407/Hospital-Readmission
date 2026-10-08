@@ -1,0 +1,22 @@
+stages:
+  clean:
+    cmd: python -m src.data_cleaning
+    deps:
+      - src/data_cleaning.py
+      - data/raw
+    params:
+      - clean
+    outs:
+      - data/processed/clean.parquet
+    metrics:
+      - reports/cleaning_report.json:
+          cache: false
+
+  validate:
+    cmd: python -m src.data_validation
+    deps:
+      - src/data_validation.py
+      - data/processed/clean.parquet
+    metrics:
+      - reports/validation_report.json:
+          cache: false
