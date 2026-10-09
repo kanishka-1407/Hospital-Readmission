@@ -20,3 +20,29 @@ stages:
     metrics:
       - reports/validation_report.json:
           cache: false
+    
+  features:
+    cmd: python -m src.features
+    deps:
+      - src/features.py
+      - data/processed/clean.parquet
+      - reports/validation_report.json
+    outs:
+      - data/processed/features.parquet
+    metrics:
+      - reports/features_report.json:
+          cache: false
+
+  split:
+    cmd: python -m src.split
+    deps:
+      - src/split.py
+      - data/processed/features.parquet
+    params:
+      - split
+    outs:
+      - data/processed/train.parquet
+      - data/processed/test.parquet
+    metrics:
+      - reports/split_report.json:
+          cache: false

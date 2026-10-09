@@ -1,0 +1,20 @@
+{
+  "rows": 99340,
+  "columns": 54,
+  "new_features": [
+    "diag_1_group",
+    "diag_2_group",
+    "diag_3_group",
+    "age_num",
+    "admission_type",
+    "admission_source",
+    "discharge_group",
+    "total_prior_visits",
+    "num_meds_taken",
+    "num_meds_changed",
+    "lab_tests_per_day",
+    "meds_per_day",
+    "a1c_tested",
+    "glucose_tested"
+  ]
+}

@@ -37,23 +37,23 @@ stages:
           - admission_type_id
           - discharge_disposition_id
           - admission_source_id
-          keep_first_encounter_only: true
+          keep_first_encounter_only: false
     outs:
     - path: data/processed/clean.parquet
       hash: md5
-      md5: df35c65155c2f8271d8d45b6692acd18
-      size: 1955672
+      md5: 5b2ad5536caacb6cb3bc8cef01cd0021
+      size: 2612708
     - path: reports/cleaning_report.json
       hash: md5
-      md5: 25945f12c088f90f05d4b4e934127b4c
-      size: 295
+      md5: 152d1576956005a6aab74bd580abdf3f
+      size: 259
   validate:
     cmd: python -m src.data_validation
     deps:
     - path: data/processed/clean.parquet
       hash: md5
-      md5: df35c65155c2f8271d8d45b6692acd18
-      size: 1955672
+      md5: 5b2ad5536caacb6cb3bc8cef01cd0021
+      size: 2612708
     - path: src/data_validation.py
       hash: md5
       md5: 52dd34492060877edd8a9c760a2ceafa
@@ -61,5 +61,58 @@ stages:
     outs:
     - path: reports/validation_report.json
       hash: md5
-      md5: 9a4260ef9fb1bf64a4a6cd27a2907915
+      md5: b492753b91ee178f67f7bf96bed38224
       size: 63
+  features:
+    cmd: python -m src.features
+    deps:
+    - path: data/processed/clean.parquet
+      hash: md5
+      md5: 5b2ad5536caacb6cb3bc8cef01cd0021
+      size: 2612708
+    - path: reports/validation_report.json
+      hash: md5
+      md5: b492753b91ee178f67f7bf96bed38224
+      size: 63
+    - path: src/features.py
+      hash: md5
+      md5: 3402cef80af00f33f6f6c3963c39f905
+      size: 5054
+    outs:
+    - path: data/processed/features.parquet
+      hash: md5
+      md5: 2369bac74cac18e3c26c808c3029b422
+      size: 2810014
+    - path: reports/features_report.json
+      hash: md5
+      md5: 119f26363fdf9694519cab0440f2cac5
+      size: 361
+  split:
+    cmd: python -m src.split
+    deps:
+    - path: data/processed/features.parquet
+      hash: md5
+      md5: 2369bac74cac18e3c26c808c3029b422
+      size: 2810014
+    - path: src/split.py
+      hash: md5
+      md5: 5051d00d41f0b5e21f850bd00b06310e
+      size: 1790
+    params:
+      params.yaml:
+        split:
+          test_size: 0.2
+          random_state: 42
+    outs:
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 8656e84d78476009feb9962c20a7d88c
+      size: 588352
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 2e3b722526effc0fe52a4429c496f7f9
+      size: 2255402
+    - path: reports/split_report.json
+      hash: md5
+      md5: 5203588e72e5d7481dcb3394426b1704
+      size: 156

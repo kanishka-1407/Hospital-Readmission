@@ -4,10 +4,9 @@
   "dropped_duplicate_rows": 0,
   "dropped_invalid_gender": 3,
   "dropped_expired_hospice": 2423,
-  "dropped_repeat_patients": 29353,
-  "rows_clean": 69987,
+  "rows_clean": 99340,
   "cols_clean": 46,
   "unique_patients": 69987,
-  "target_rate": 0.0898,
+  "target_rate": 0.1139,
   "remaining_nulls": 0
 }
