@@ -1,39 +1,35 @@
 ## Pipeline
 
 ```
-data/raw (DVC) → clean → data/processed/clean.parquet → validate
+data/raw (DVC) → clean → validate → features → split → train / test
 ```
 
 | Stage | Script | Output |
 |---|---|---|
-| clean | `src/data_cleaning.py` | `data/processed/clean.parquet`, `reports/cleaning_report.json` |
-| validate | `src/data_validation.py` | `reports/validation_report.json` |
+| clean | `src/data_cleaning.py` | `data/processed/clean.parquet` |
+| validate | `src/data_validation.py` | `reports/validation_report.json` (quality gate) |
+| features | `src/features.py` | `data/processed/features.parquet` |
+| split | `src/split.py` | `data/processed/train.parquet`, `test.parquet` |
 
-Cleaning decisions (see `params.yaml` and `notebooks/01_eda.ipynb`):
-- `?` is treated as missing, but `None` in `A1Cresult` and `max_glu_serum` means "test not done"
-- Dropped `weight`, `payer_code`, and the constant `examide` and `citoglipton`
-- Removed 3 rows with invalid gender and patients who died or went to hospice
-- Target: `readmitted == "<30"` → 1 (about 11% positive, so imbalanced)
-- `patient_nbr` is kept for a group-wise split to prevent leakage
+## Feature engineering
+- ICD-9 diagnosis codes grouped into 9 disease categories
+- `age` bucket converted to a midpoint (`age_num`); the bucket is kept for the fairness audit
+- Admission and discharge ID codes grouped into labelled categories
+- New features: `total_prior_visits`, `num_meds_taken`, `num_meds_changed`,
+  `lab_tests_per_day`, `meds_per_day`, `a1c_tested`, `glucose_tested`
+- Scaling and one-hot encoding are in `src/preprocessing.py` and are fit on the **training set only**
+  (no leakage)
 
-## How to run
-
-```bash
-git clone https://github.com/kanishka-1407/Hospital-Readmission.git
-cd Hospital-Readmission
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-dvc pull          # needs a configured DVC remote
-dvc repro
-pytest -q
-```
+## Train/test split
+Stratified and grouped by `patient_nbr`, so the same patient never appears in both sets
+(`reports/split_report.json` records `patient_overlap: 0`).
 
 ## Status
 - [x] Repo, DVC and environment setup
 - [x] EDA
-- [x] Data cleaning pipeline + validation + unit tests
-- [ ] Feature engineering
-- [ ] Experiments with MLflow
+- [x] Data cleaning, validation and unit tests
+- [x] Feature engineering and group-wise split
+- [ ] Experiments with MLflow (baseline and LightGBM)
 - [ ] FastAPI + Docker
 - [ ] CI/CD (GitHub Actions)
 - [ ] Monitoring (Evidently)
