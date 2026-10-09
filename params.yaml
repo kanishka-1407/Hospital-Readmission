@@ -4,3 +4,7 @@ clean:
   fill_unknown_columns: [race, medical_specialty, diag_1, diag_2, diag_3]
   id_columns: [admission_type_id, discharge_disposition_id, admission_source_id]
   keep_first_encounter_only: false  # false = keep all rows, do a group split later
+
+split:
+  test_size: 0.2
+  random_state: 42
